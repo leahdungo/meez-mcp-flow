@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meez MCP Flow</title>
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+</style>
+</head>
+<body>
 <!-- ==================================================================
      Meez MCP flow — animated vertical diagram
      Paste this whole block into a Webflow Embed element.
@@ -178,7 +189,14 @@
       var w = outer.clientWidth;
       var scale = Math.min(1, w / naturalWidth);
       canvas.style.transform = 'scale(' + scale + ')';
-      outer.style.height = Math.round(naturalHeight * scale) + 'px';
+      var outerHeight = Math.round(naturalHeight * scale);
+      outer.style.height = outerHeight + 'px';
+      // Report our real rendered height to a parent window, in case this
+      // page is embedded via <iframe> — lets the host page size the
+      // iframe exactly instead of guessing a fixed aspect ratio.
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ mcpFlowHeight: outerHeight }, '*');
+      }
     }
     fit();
     if (window.ResizeObserver) {
@@ -190,3 +208,5 @@
   document.querySelectorAll('.mcp-flow').forEach(init);
 })();
 </script>
+</body>
+</html>
